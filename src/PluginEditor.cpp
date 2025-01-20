@@ -12,7 +12,14 @@ PluginEditor::PluginEditor(PluginProcessor& p)
 
                 .withResourceProvider([this](const auto& url) { return getResource(url); })
                 .withNativeIntegrationEnabled()
-                .withEventListener("dragStart", [this](juce::var) { dragginStartedFromFrontEnd(); })
+                .withEventListener("dragStart", [this](juce::var) {
+                    dragginStartedFromFrontEnd();
+                })
+                .withNativeFunction(juce::Identifier{"downloadFile"},
+                                    [this](const juce::Array<juce::var>& args,
+                                           juce::WebBrowserComponent::NativeFunctionCompletion completion) {
+                    downloadFile(args, std::move(completion));
+                })
     }
 {
     juce::ignoreUnused(processorRef);
@@ -92,4 +99,39 @@ void PluginEditor::dragginStartedFromFrontEnd()
     jassert(juce::File{sample_path}.existsAsFile());
     
     performExternalDragDropOfFiles(StringArray{sample_path}, false, &mWebView);
+}
+
+void PluginEditor::downloadFile(const juce::Array<juce::var>& args,
+                                juce::WebBrowserComponent::NativeFunctionCompletion completion)
+{
+    jassert(args.size() == 1);
+    const std::string url = args.getReference(0).toString().toStdString();
+    
+    printf("downloadFile %s\n", url.c_str());
+    
+    juce::URL download(url);
+    File destFile = juce::File::getSpecialLocation(juce::File::tempDirectory).getChildFile(download.getFileName());
+    std::unique_ptr<juce::URL::DownloadTask> taskProgress = download.downloadToFile(destFile, juce::URL::DownloadTaskOptions{});
+    
+    if(!taskProgress) {
+        printf("Download task could not be created\n");
+        return;
+    }
+    
+    while(taskProgress->isFinished() == false) {
+        printf("Downloading %s ...\n", download.getFileName().toStdString().c_str());
+        Thread::sleep(500);
+    }
+    bool error = taskProgress->hadError();
+    
+    if(!error) {
+        mDownloadedFile = destFile;
+        printf("Downloaded file in %s\n", mDownloadedFile.getFullPathName().toStdString().c_str());
+    }
+    else {
+        printf("Download failed");
+    }
+    
+    const std::string download_path = mDownloadedFile.getFullPathName().toStdString();
+    completion(download_path.c_str());
 }

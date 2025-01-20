@@ -21,6 +21,10 @@ private:
     std::optional<Resource> getResource(const juce::String& url);
     
     void dragginStartedFromFrontEnd();
+    void downloadFile(const juce::Array<juce::var>& args,
+                      juce::WebBrowserComponent::NativeFunctionCompletion completion);
+    
+    File mDownloadedFile;
     
     // This reference is provided as a quick way for your editor to
     // access the processor object that created it.

@@ -1,5 +1,27 @@
-#source {
-	border: 1px solid black;
+* {
+	font-family: sans-serif;
+	font-size: 1em;
+	font-weight: 300;
+}
+
+#dragSource, #downloadButton  {
 	width: fit-content;
 	padding: 1em;
+	margin: 1em;
+	display: inline-block;
+}
+
+#downloadedFilePath  {
+	font-size: 0.9em;
+}
+
+#dragSource {
+	cursor: grab;
+	background-color: #ddd;
+}
+
+#downloadButton {
+	cursor: pointer;
+	background-color: #444;
+	color: #ddd;
 }
