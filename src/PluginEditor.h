@@ -20,11 +20,11 @@ private:
     using Resource = juce::WebBrowserComponent::Resource;
     std::optional<Resource> getResource(const juce::String& url);
     
-    void dragginStartedFromFrontEnd();
+    void dragginStartedFromFrontEnd(juce::var frontEndObject);
     void downloadFile(const juce::Array<juce::var>& args,
                       juce::WebBrowserComponent::NativeFunctionCompletion completion);
     
-    File mDownloadedFile;
+    std::unordered_map<std::string, std::string> mFileMap {};
     
     // This reference is provided as a quick way for your editor to
     // access the processor object that created it.

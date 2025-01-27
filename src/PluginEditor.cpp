@@ -12,8 +12,8 @@ PluginEditor::PluginEditor(PluginProcessor& p)
 
                 .withResourceProvider([this](const auto& url) { return getResource(url); })
                 .withNativeIntegrationEnabled()
-                .withEventListener("dragStart", [this](juce::var) {
-                    dragginStartedFromFrontEnd();
+                .withEventListener("dragStart", [this](juce::var frontEndObject) {
+                    dragginStartedFromFrontEnd(frontEndObject);
                 })
                 .withNativeFunction(juce::Identifier{"downloadFile"},
                                     [this](const juce::Array<juce::var>& args,
@@ -91,23 +91,32 @@ auto PluginEditor::getResource(const juce::String& url) -> std::optional<Resourc
     return std::nullopt;
 }
 
-void PluginEditor::dragginStartedFromFrontEnd()
+void PluginEditor::dragginStartedFromFrontEnd(juce::var frontEndObject)
 {
-    printf("Drag started in JS\n");
+    const std::string file_id = frontEndObject.getProperty("fileId", "").toString().toStdString();
+    jassert(!file_id.empty());
     
-    const auto sample_path = std::string(RESOURCE_ROOT) + "/audio/sample.mp3";
-    jassert(juce::File{sample_path}.existsAsFile());
+    printf("Drag started on file id: %s\n", file_id.c_str());
     
-    performExternalDragDropOfFiles(StringArray{sample_path}, false, &mWebView);
+    auto it = mFileMap.find(file_id);
+    
+    if(it != mFileMap.end()) {
+        const auto sample_path = it->second;
+        performExternalDragDropOfFiles(StringArray{sample_path}, false, &mWebView);
+    }
+    else {
+        printf("ERROR: trying to drag a non existing file id %s\n", file_id.c_str());
+    }
 }
 
 void PluginEditor::downloadFile(const juce::Array<juce::var>& args,
                                 juce::WebBrowserComponent::NativeFunctionCompletion completion)
 {
-    jassert(args.size() == 1);
+    jassert(args.size() == 2);
     const std::string url = args.getReference(0).toString().toStdString();
+    const std::string file_id = args.getReference(1).toString().toStdString();
     
-    printf("downloadFile %s\n", url.c_str());
+    printf("downloadFile %s using id %s\n", url.c_str(), file_id.c_str());
     
     juce::URL download(url);
     File destFile = juce::File::getSpecialLocation(juce::File::tempDirectory).getChildFile(download.getFileName());
@@ -124,14 +133,16 @@ void PluginEditor::downloadFile(const juce::Array<juce::var>& args,
     }
     bool error = taskProgress->hadError();
     
+    std::string dowloaded_path = "";
+    
     if(!error) {
-        mDownloadedFile = destFile;
-        printf("Downloaded file in %s\n", mDownloadedFile.getFullPathName().toStdString().c_str());
+        dowloaded_path =  destFile.getFullPathName().toStdString();
+        mFileMap.insert({file_id, dowloaded_path});
+        printf("Downloaded file in %s\n", dowloaded_path.c_str());
     }
     else {
         printf("Download failed");
     }
     
-    const std::string download_path = mDownloadedFile.getFullPathName().toStdString();
-    completion(download_path.c_str());
+    completion(dowloaded_path.c_str());
 }
