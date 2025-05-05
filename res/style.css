@@ -4,7 +4,7 @@
 	font-weight: 300;
 }
 
-#dragSource, #downloadButton  {
+#dragSource, #downloadButton, #drop-zone  {
 	width: fit-content;
 	padding: 1em;
 	margin: 1em;
@@ -18,10 +18,46 @@
 #dragSource {
 	cursor: grab;
 	background-color: #ddd;
+  border-radius: 10px;
 }
 
 #downloadButton {
 	cursor: pointer;
 	background-color: #444;
 	color: #ddd;
+  border-radius: 10px;
+}
+
+#drop-zone {
+  border: 3px dashed #aaa;
+  border-radius: 10px;
+  padding: 2em;
+  text-align: center;
+  width: 100px;
+  height: 75px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #666;
+  background-color: #fafafa;
+  margin-bottom: 1em;
+}
+
+#drop-zone.hover {
+  border-color: #333;
+  color: #000;
+  background-color: #f0f0f0;
+}
+
+#file-name {
+  font-weight: bold;
+  margin-top: 1em;
+}
+
+#file-content {
+  padding: 1em;
+  border: 1px solid #ddd;
+  width: auto;
+  height: 280px;
+  overflow: auto;
 }

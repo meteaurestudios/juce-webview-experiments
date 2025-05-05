@@ -23,9 +23,7 @@ private:
     void dragginStartedFromFrontEnd(juce::var frontEndObject);
     void downloadFile(const juce::Array<juce::var>& args,
                       juce::WebBrowserComponent::NativeFunctionCompletion completion);
-    
-    void openLinkInBrowser(const juce::Array<juce::var>& args);
-    
+        
     std::unordered_map<std::string, std::string> mFileMap {};
     
     // This reference is provided as a quick way for your editor to

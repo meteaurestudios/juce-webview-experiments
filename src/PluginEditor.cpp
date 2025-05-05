@@ -20,11 +20,6 @@ PluginEditor::PluginEditor(PluginProcessor& p)
                                    juce::WebBrowserComponent::NativeFunctionCompletion completion) {
             downloadFile(args, std::move(completion));
         })
-        .withNativeFunction(juce::Identifier{"openLinkInBrowser"},
-                            [this](const juce::Array<juce::var>& args,
-                                   juce::WebBrowserComponent::NativeFunctionCompletion) {
-            openLinkInBrowser(args);
-        })
     }
 {
     juce::ignoreUnused(processorRef);
@@ -150,12 +145,4 @@ void PluginEditor::downloadFile(const juce::Array<juce::var>& args,
     }
     
     completion(dowloaded_path.c_str());
-}
-
-void PluginEditor::openLinkInBrowser(const juce::Array<juce::var>& args)
-{
-    jassert(args.size() == 1);
-    const std::string url = args.getReference(0).toString().toStdString();
-
-    std::system(("open " + url).c_str());
 }
