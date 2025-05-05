@@ -4,7 +4,7 @@
 	font-weight: 300;
 }
 
-#dragSource, #downloadButton  {
+#dragSource, #downloadButton, #drop-zone  {
 	width: fit-content;
 	padding: 1em;
 	margin: 1em;
@@ -18,12 +18,14 @@
 #dragSource {
 	cursor: grab;
 	background-color: #ddd;
+  border-radius: 10px;
 }
 
 #downloadButton {
 	cursor: pointer;
 	background-color: #444;
 	color: #ddd;
+  border-radius: 10px;
 }
 
 #drop-zone {
@@ -56,6 +58,6 @@
   padding: 1em;
   border: 1px solid #ddd;
   width: auto;
-  height: 300px;
+  height: 280px;
   overflow: auto;
 }

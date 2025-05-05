@@ -156,6 +156,6 @@ void PluginEditor::openLinkInBrowser(const juce::Array<juce::var>& args)
 {
     jassert(args.size() == 1);
     const std::string url = args.getReference(0).toString().toStdString();
-
-    std::system(("open " + url).c_str());
+    
+    juce::URL{url}.launchInDefaultBrowser();
 }
