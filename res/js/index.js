@@ -4,7 +4,6 @@ let filePath = "https://github.com/meteaurestudios/juce-webview-experiments/raw/
 let testFileId = "FileId1"
 
 const downloadFunction = Juce.getNativeFunction("downloadFile");
-const openLinkInBrowserFunction = Juce.getNativeFunction("openLinkInBrowser");
 
 function downloadFile() {
     downloadFunction(filePath, testFileId).then(result => {
@@ -65,7 +64,7 @@ document.addEventListener("DOMContentLoaded", () => {
         dropZone.classList.remove('hover');
 
         const file = e.dataTransfer.files[0];
-        
+
         if (!file) {
             return;
         }
