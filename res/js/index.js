@@ -63,9 +63,12 @@ document.addEventListener("DOMContentLoaded", () => {
     dropZone.addEventListener('drop', (e) => {
         dropZone.classList.remove('hover');
 
+        console.log('Available types:', Array.from(e.dataTransfer.types));
+        
         const file = e.dataTransfer.files[0];
 
         if (!file) {
+            fileContent.textContent = 'No file received';
             return;
         }
         
@@ -73,13 +76,18 @@ document.addEventListener("DOMContentLoaded", () => {
         fileContent.textContent = 'Loading...';
         
         const reader = new FileReader();
+
         reader.onload = () => {
             const text = reader.result;
             fileContent.textContent = text;
         };
 
         reader.onerror = () => {
-            fileContent.textContent = 'Error reading file.';
+            fileContent.textContent = 'Error reading file';
+        };
+
+        reader.onabort = () => {
+            fileContent.textContent = 'Operation aborted';
         };
         
         reader.readAsText(file);
