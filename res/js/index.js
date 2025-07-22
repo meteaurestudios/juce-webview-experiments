@@ -65,31 +65,38 @@ document.addEventListener("DOMContentLoaded", () => {
 
         console.log('Available types:', Array.from(e.dataTransfer.types));
         
-        const file = e.dataTransfer.files[0];
+        if(e.dataTransfer.files.length > 0) {
+            const file = e.dataTransfer.files[0];
 
-        if (!file) {
-            fileContent.textContent = 'No file received';
-            return;
+            fileName.textContent = `File: ${file.name}`;
+            fileContent.textContent = 'Loading...';
+            
+            const reader = new FileReader();
+
+            reader.onload = () => {
+                const text = reader.result;
+                fileContent.textContent = text;
+            };
+
+            reader.onerror = () => {
+                fileContent.textContent = 'Error reading file';
+            };
+
+            reader.onabort = () => {
+                fileContent.textContent = 'Operation aborted';
+            };
+            
+            reader.readAsText(file);
         }
-        
-        fileName.textContent = `File: ${file.name}`;
-        fileContent.textContent = 'Loading...';
-        
-        const reader = new FileReader();
+        else if(e.dataTransfer.types.includes('text/plain')) {
+            const text = e.dataTransfer.getData('text/plain');
 
-        reader.onload = () => {
-            const text = reader.result;
-            fileContent.textContent = text;
-        };
+            if(text) {
+                fileName.textContent = 'Text Drop';
+                fileContent.textContent = text;
+                console.log('Text dropped:', text);
+            }
+        }
 
-        reader.onerror = () => {
-            fileContent.textContent = 'Error reading file';
-        };
-
-        reader.onabort = () => {
-            fileContent.textContent = 'Operation aborted';
-        };
-        
-        reader.readAsText(file);
     });
 });
