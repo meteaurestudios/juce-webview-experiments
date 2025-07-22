@@ -92,7 +92,7 @@ document.addEventListener("DOMContentLoaded", () => {
             const text = e.dataTransfer.getData('text/plain');
 
             if(text) {
-                fileName.textContent = 'Text Drop';
+                fileName.textContent = 'Text dropped';
                 fileContent.textContent = text;
                 console.log('Text dropped:', text);
             }
